@@ -20,6 +20,13 @@ public class DownloadList {
                 .collect(Collectors.toList());
     }
 
+    public List<String> getDownloadList() {
+        return pathMap.entrySet().stream()
+                .filter(map -> map.getValue())
+                .map(map -> map.getKey())
+                .collect(Collectors.toList());
+    }
+
     public void add(String path) {
         pathMap.putIfAbsent(path, false);
     }

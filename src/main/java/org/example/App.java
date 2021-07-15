@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.model.DownloadList;
+
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -19,11 +21,18 @@ public class App {
         }
 
         WebsiteDownloader websiteDownloader = new WebsiteDownloader(url, depth);
+        DownloadList downloadList = null;
         try {
-            websiteDownloader.run();
+            downloadList = websiteDownloader.run();
         } catch (ExecutionException | InterruptedException e) {
             System.out.println("Download of " + url + " didn't execute successfully");
             e.printStackTrace();
+            return;
         }
+
+        System.out.println(url + " was downloaded successfully!");
+        System.out.println("To a depth of " +depth + ", " + downloadList.getDownloadList().size() + "paths detected and downloaded.");
+        System.out.println("And for a next step to a depth of " + (depth+1) + ", " + downloadList.getUnDownloadList().size() + " new paths detected.");
+
     }
 }

@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.model.DownloadList;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * @author Ehsan Sh
@@ -18,7 +15,7 @@ public class WebsiteDownloader {
     private final String url;
     private final Integer depth;
 
-    public void run() throws ExecutionException, InterruptedException {
+    public DownloadList run() throws ExecutionException, InterruptedException {
 
         //download list maintaining the status of download for each path
         DownloadList downloadList = new DownloadList();
@@ -30,6 +27,16 @@ public class WebsiteDownloader {
             downloadConcurrently(url, downloadList, executorService);
         }
 
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(60, TimeUnit.MILLISECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
+
+        return downloadList;
     }
 
     private void downloadConcurrently(String baseURL, DownloadList downloadList, ExecutorService executorService) throws InterruptedException {
